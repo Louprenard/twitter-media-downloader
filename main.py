@@ -4,8 +4,9 @@ import csv
 import ast
 import requests
 import os
-
+import youtube_dl
 from pathlib import Path
+
 
 try:
     Path("./images").mkdir(exist_ok=False)
@@ -36,12 +37,14 @@ for user in users:
 
     tconfig.Hide_output = True
     tconfig.Username = user
-    tconfig.Images = True
+    # If only images
+    # tconfig.Images = True
+    # If only videos
+    # tconfig.Videos = True
     tconfig.Media = True
     tconfig.Store_csv = True
     tconfig.Output = "cache_" + user + ".csv"
     if user in data and data[user]:
-        print(data[user])
         tconfig.Since = data[user]
 
     twint.run.Search(tconfig)
@@ -59,20 +62,33 @@ with open("config.json", mode="w", encoding="utf-8") as f:
 
 for user in users:
     print(user)
+
+    options = {
+        'outtmpl': "images/" + user + "/" + '%(id)s.%(ext)s'
+    }
+
     with open("cache_" + user + ".csv", encoding="utf-8") as f:
         cache = csv.reader(f)
 
         next(cache)
 
         for row in cache:
-            urls = ast.literal_eval(row[13])
             photos = ast.literal_eval(row[14])
 
             for photo in photos:
+                name = os.path.basename(photo)
+                if os.path.exists("images/" + user + "/" + name):
+                    print("Skipping " + photo)
+                    continue
+
                 print("Downloading " + photo + "...")
                 r = requests.get(photo)
-                name = os.path.basename(photo)
 
                 open("images/" + user + "/" + name, "wb").write(r.content)
+
+            url, thumb = row[20], row[24]
+            if "ext_tw_video_thumb" in thumb:
+                with youtube_dl.YoutubeDL(options) as ydl:
+                    ydl.download([url])
 
     os.remove("cache_" + user + ".csv")

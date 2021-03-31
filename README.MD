@@ -12,3 +12,7 @@ pip3 install --upgrade -e git+https://github.com/twintproject/twint.git@origin/m
 
 A file users.txt must be placed at the root of the project.
 It contains usernames, one per line.
+
+Notes
+* Issues may occur with youtube-dl, have to see if something can be done.
+* Duplicates can occur due to the renaming of the image by Twitter.
