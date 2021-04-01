@@ -14,6 +14,10 @@ try:
 except FileExistsError: pass
 
 try:
+    Path("./errors").touch(exist_ok=False)
+except FileExistsError: pass
+
+try:
     Path("./config.json").touch(exist_ok=False)
     with open("config.json", mode="w", encoding="utf-8") as f:
         f.write("{}")
@@ -97,6 +101,7 @@ for user in users:
                     with youtube_dl.YoutubeDL(options) as ydl:
                         ydl.download([url])
                 except Exception:
-                    print(user, url)
+                    with open("errors", mode="a", encoding="utf-8") as f:
+                        f.write(f"{user} {url}\n")
 
     os.remove("cache_" + user + ".csv")
