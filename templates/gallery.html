@@ -7,8 +7,15 @@
 <body>
     <a href="/">Index</a>
     <hr/>
+    {% for video in videos %}
+    <video width="320" height="204" controls>
+        <source src="/static/{{ profile }}/{{ video }}" type="video/mp4">
+    </video>
+    {% endfor %}
     {% for image in images %}
-    <img src="/static/{{ profile }}/{{ image }}"/>
+    <a href="/static/{{ profile }}/{{ image }}" target="_blank">
+    <img src="/static/{{ profile }}/{{ image }}" style="heigth: 200px; width: 100px"/>
+    </a>
     {% endfor %}
 </body>
 </html>
