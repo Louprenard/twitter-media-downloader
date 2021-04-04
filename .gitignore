@@ -1,4 +1,4 @@
 .idea
-images
+static
 config.json
 cache_*.csv

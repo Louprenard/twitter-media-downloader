@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>[Index] Twitter viewer</title>
+</head>
+<body>
+    <ul>
+        {% for profile in profiles %}
+        <li><a href="/{{ profile }}">{{ profile }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

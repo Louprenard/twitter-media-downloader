@@ -5,12 +5,16 @@ import ast
 import requests
 import os
 import youtube_dl
+import sys
 from pathlib import Path
 
 VERBOSE = False
 
+if "-v" in sys.argv:
+    VERBOSE = True
+
 try:
-    Path("./images").mkdir(exist_ok=False)
+    Path("static").mkdir(exist_ok=False)
 except FileExistsError: pass
 
 try:
@@ -38,7 +42,7 @@ tweets = []
 
 for user in users:
     try:
-        Path("./images/" + user).mkdir(exist_ok=False)
+        Path("./static/" + user).mkdir(exist_ok=False)
     except FileExistsError: pass
     print(user)
 
@@ -46,7 +50,7 @@ for user in users:
 
     tconfig.Hide_output = not VERBOSE
     tconfig.Username = user
-    # If only images
+    # If only static
     # tconfig.Images = True
     # If only videos
     # tconfig.Videos = True
@@ -73,7 +77,7 @@ for user in users:
     print(user)
 
     options = {
-        'outtmpl': "images/" + user + "/" + '%(id)s.%(ext)s'
+        'outtmpl': "static/" + user + "/" + '%(id)s.%(ext)s'
     }
 
     with open("cache_" + user + ".csv", encoding="utf-8") as f:
@@ -86,14 +90,14 @@ for user in users:
 
             for photo in photos:
                 name = os.path.basename(photo)
-                if os.path.exists("images/" + user + "/" + name):
+                if os.path.exists("static/" + user + "/" + name):
                     if VERBOSE: print("Skipping " + photo)
                     continue
 
                 if VERBOSE: print("Downloading " + photo + "...")
                 r = requests.get(photo)
 
-                open("images/" + user + "/" + name, "wb").write(r.content)
+                open("static/" + user + "/" + name, "wb").write(r.content)
 
             url, thumb = row[20], row[24]
             if "video_thumb" in thumb:

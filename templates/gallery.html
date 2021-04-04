@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery of {{ profile }}</title>
+</head>
+<body>
+    <a href="/">Index</a>
+    <hr/>
+    {% for image in images %}
+    <img src="/static/{{ profile }}/{{ image }}"/>
+    {% endfor %}
+</body>
+</html>
