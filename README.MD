@@ -1,5 +1,6 @@
 A simple media downloader and viewer for Twitter without account.
-Currently, only download is supported via twint. 
+Currently, only download is supported via twint.
+A basic (and very naive) viewer is available, but it is not optimized.
 
 ---
 
