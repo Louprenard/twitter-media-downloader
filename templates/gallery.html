@@ -11,7 +11,7 @@
     <hr />
     {% for video in videos %}
     <video width="400" height="200" controls>
-        <source src="/{{ root }}/{{ profile }}/{{ video }}" type="video/mp4">
+        <source src="data:video/mp4;base64,{{ video.data }}" type="video/mp4">
     </video>
     {% endfor %}
     {% for image in images %}
