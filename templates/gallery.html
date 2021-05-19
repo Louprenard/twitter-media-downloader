@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Gallery of {{ profile }}</title>
 </head>
+
 <body>
     <a href="/">Index</a>
-    <hr/>
+    <hr />
     {% for video in videos %}
-    <video width="320" height="204" controls>
-        <source src="/static/{{ profile }}/{{ video }}" type="video/mp4">
+    <video width="400" height="200" controls>
+        <source src="/{{ root }}/{{ profile }}/{{ video }}" type="video/mp4">
     </video>
     {% endfor %}
     {% for image in images %}
-    <a href="/static/{{ profile }}/{{ image }}" target="_blank">
-    <img src="/static/{{ profile }}/{{ image }}" style="heigth: 200px; width: 100px"/>
+    <a href="/{{ root }}/{{ profile }}/{{ image.name }}" target="_blank">
+        <img src="data:image/png;base64,{{ image.data }}" style="height: 200px; width: 200px" />
     </a>
     {% endfor %}
 </body>
+
 </html>
