@@ -60,14 +60,23 @@ for user in users:
     if user in data and data[user]:
         tconfig.Since = data[user]
 
-    twint.run.Search(tconfig)
+    try:
+        twint.run.Search(tconfig)
+    except Exception as e:
+        # print(e)
+        print("Issue with Twitter scrapping, retry later")
 
-    with open("cache_" + user + ".csv", encoding="utf-8") as f:
-        cache = csv.reader(f)
+    try: 
+        with open("cache_" + user + ".csv", encoding="utf-8") as f:
+            cache = csv.reader(f)
 
-        next(cache)
-        c = next(cache)
-        data[user] = c[3] + " " + c[4]
+            next(cache)
+            c = next(cache)
+            data[user] = c[3] + " " + c[4]
+    except Exception as e:
+        # print(e)
+        print("Nothing found, creating blank csv.")
+        Path("cache_" + user + ".csv").touch()
 
 with open("config.json", mode="w", encoding="utf-8") as f:
     json.dump(data, f)
@@ -80,7 +89,19 @@ for user in users:
         'outtmpl': "static/" + user + "/" + '%(id)s.%(ext)s'
     }
 
+    correct = True
+
     with open("cache_" + user + ".csv", encoding="utf-8") as f:
+        if len(f.read()) == 0:
+            correct = False
+
+    if not correct:
+        print("Blank csv, skipping.")
+        os.remove("cache_" + user + ".csv")
+        continue
+    
+    with open("cache_" + user + ".csv", encoding="utf-8") as f:
+
         cache = csv.reader(f)
 
         next(cache)
