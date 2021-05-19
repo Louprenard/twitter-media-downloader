@@ -1,3 +1,4 @@
+import base64
 import os
 from flask import Flask, render_template, redirect
 
@@ -17,3 +18,6 @@ def list_images(profile):
 @app.route("/")
 def index():
     return render_template("index.html", profiles=os.listdir(app.static_folder))
+
+if __name__ == "__main__":
+    app.run()
