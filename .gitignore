@@ -1,4 +1,8 @@
 .idea
-static
+images
+__pycache__
+src
+errors
 config.json
 cache_*.csv
+users.txt
