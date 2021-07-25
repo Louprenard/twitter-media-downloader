@@ -8,7 +8,7 @@ import youtube_dl
 import sys
 from pathlib import Path
 
-VERBOSE = True
+VERBOSE = False
 
 if "-v" in sys.argv:
     VERBOSE = True
@@ -162,5 +162,5 @@ def download_cache(delete=True):
         if delete:
             os.remove(f"cache_{user}.csv")
 
-#create_cache()
+create_cache()
 download_cache(False)
