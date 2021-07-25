@@ -113,16 +113,25 @@ def download_cache(delete=True):
             os.remove("cache_" + user + ".csv")
             continue
         
+        total = 0
+        with open("cache_" + user + ".csv", encoding="utf-8") as f:
+            total = len(f.readlines()) - 1
+
         with open("cache_" + user + ".csv", encoding="utf-8") as f:
 
             cache = csv.reader(f)
 
             next(cache)
 
+            current = 1
             for row in cache:
                 photos = ast.literal_eval(row[14])
 
-                for photo in photos:
+                photos_len = len(photos)
+                for idx, photo in enumerate(photos):
+                    print(f"{current}/{total} ", end="")
+                    if photos_len > 1:
+                        print(f"{idx + 1}/{photos_len} ", end="")
                     name = os.path.basename(photo)
                     if os.path.exists("images/" + user + "/" + name):
                         if VERBOSE: print("Skipping " + photo)
@@ -137,7 +146,7 @@ def download_cache(delete=True):
                 if "video_thumb" in thumb:
                     name = url.split("/")[-1]
                     if os.path.exists("images/" + user + "/" + name + ".mp4"):
-                        if VERBOSE: print("Skipping video from " + url)
+                        if VERBOSE: print(f"{current}/{total} Skipping video from " + url)
                         continue
 
                     try:
@@ -146,9 +155,11 @@ def download_cache(delete=True):
                     except Exception:
                         with open("errors", mode="a", encoding="utf-8") as f:
                             f.write(f"{user} {url}\n")
+            
+                current += 1
 
         if delete:
             os.remove("cache_" + user + ".csv")
 
 #create_cache()
-download_cache()
+download_cache(False)
