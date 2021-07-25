@@ -94,6 +94,9 @@ def download_cache(delete=True):
 
     for user in users:
         print(user)
+        if not Path("cache_" + user + ".csv").exists():
+            print("Cache not found, skipping.")
+            continue
 
         options = {
             'outtmpl': "images/" + user + "/" + '%(id)s.%(ext)s'
@@ -142,5 +145,5 @@ def download_cache(delete=True):
         if delete:
             os.remove("cache_" + user + ".csv")
 
-create_cache()
+#create_cache()
 download_cache()
