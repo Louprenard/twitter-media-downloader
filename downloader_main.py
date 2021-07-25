@@ -59,7 +59,7 @@ def create_cache():
         # tconfig.Videos = True
         tconfig.Media = True
         tconfig.Store_csv = True
-        tconfig.Output = "cache_" + user + ".csv"
+        tconfig.Output = f"cache_{user}.csv"
         if user in data and data[user]:
             tconfig.Since = data[user]
 
@@ -70,7 +70,7 @@ def create_cache():
             print("Issue with Twitter scrapping, retry later")
 
         try: 
-            with open("cache_" + user + ".csv", encoding="utf-8") as f:
+            with open(f"cache_{user}.csv", encoding="utf-8") as f:
                 cache = csv.reader(f)
 
                 next(cache)
@@ -79,7 +79,7 @@ def create_cache():
         except Exception as e:
             # print(e)
             print("Nothing found, creating blank csv.")
-            Path("cache_" + user + ".csv").touch()
+            Path(f"cache_{user}.csv").touch()
 
     with open("config.json", mode="w", encoding="utf-8") as f:
         json.dump(data, f)
@@ -94,30 +94,30 @@ def download_cache(delete=True):
 
     for user in users:
         print(user)
-        if not Path("cache_" + user + ".csv").exists():
+        if not Path(f"cache_{user}.csv").exists():
             print("Cache not found, skipping.")
             continue
 
         options = {
-            'outtmpl': "images/" + user + "/" + '%(id)s.%(ext)s'
+            'outtmpl': f"images/{user}/" + '%(id)s.%(ext)s'
         }
 
         correct = True
 
-        with open("cache_" + user + ".csv", encoding="utf-8") as f:
+        with open(f"cache_{user}.csv", encoding="utf-8") as f:
             if len(f.read()) == 0:
                 correct = False
 
         if not correct:
             print("Blank csv, skipping.")
-            os.remove("cache_" + user + ".csv")
+            if delete: os.remove(f"cache_{user}.csv")
             continue
         
         total = 0
-        with open("cache_" + user + ".csv", encoding="utf-8") as f:
+        with open(f"cache_{user}.csv", encoding="utf-8") as f:
             total = len(f.readlines()) - 1
 
-        with open("cache_" + user + ".csv", encoding="utf-8") as f:
+        with open(f"cache_{user}.csv", encoding="utf-8") as f:
 
             cache = csv.reader(f)
 
@@ -133,22 +133,23 @@ def download_cache(delete=True):
                     if photos_len > 1:
                         print(f"{idx + 1}/{photos_len} ", end="")
                     name = os.path.basename(photo)
-                    if os.path.exists("images/" + user + "/" + name):
-                        if VERBOSE: print("Skipping " + photo)
+                    if os.path.exists(f"images/{user}/{name}"):
+                        if VERBOSE: print(f"Skipping {photo}")
                         continue
 
-                    if VERBOSE: print("Downloading " + photo + "...")
+                    if VERBOSE: print(f"Downloading {photo}...")
                     r = requests.get(photo)
 
-                    open("images/" + user + "/" + name, "wb").write(r.content)
+                    open(f"images/{user}/{name}", "wb").write(r.content)
 
                 url, thumb = row[20], row[24]
                 if "video_thumb" in thumb:
                     name = url.split("/")[-1]
-                    if os.path.exists("images/" + user + "/" + name + ".mp4"):
-                        if VERBOSE: print(f"{current}/{total} Skipping video from " + url)
+                    if os.path.exists(f"images/{user}/{name}.mp4"):
+                        if VERBOSE: print(f"{current}/{total} Skipping video from {url}")
                         continue
 
+                    print(f"{current}/{total} Downloading {url}...")
                     try:
                         with youtube_dl.YoutubeDL(options) as ydl:
                             ydl.download([url])
@@ -159,7 +160,7 @@ def download_cache(delete=True):
                 current += 1
 
         if delete:
-            os.remove("cache_" + user + ".csv")
+            os.remove(f"cache_{user}.csv")
 
 #create_cache()
 download_cache(False)
