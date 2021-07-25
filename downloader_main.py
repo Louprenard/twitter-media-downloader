@@ -135,6 +135,11 @@ def download_cache(delete=True):
 
                 url, thumb = row[20], row[24]
                 if "video_thumb" in thumb:
+                    name = url.split("/")[-1]
+                    if os.path.exists("images/" + user + "/" + name + ".mp4"):
+                        if VERBOSE: print("Skipping video from " + url)
+                        continue
+
                     try:
                         with youtube_dl.YoutubeDL(options) as ydl:
                             ydl.download([url])
