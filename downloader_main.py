@@ -5,16 +5,19 @@ import ast
 import requests
 import os
 import youtube_dl
-import sys
 from pathlib import Path
+import argparse
 
-VERBOSE = False
+parser = argparse.ArgumentParser(description="A simple tool to download videos and picture directly from Twitter, without an account.")
+parser.add_argument("--path", dest="path", type=str, help="Specify the output path to download files", default="images")
+parser.add_argument("--verbose", dest="verbose", type=bool, help="Specify if the program must outputs logs while downloading", nargs="?", default=False, const=True)
 
-if "-v" in sys.argv:
-    VERBOSE = True
+args = parser.parse_args()
+
+# print(args)
 
 try:
-    Path("images").mkdir(exist_ok=False)
+    Path(args.path).mkdir(exist_ok=False)
 except FileExistsError: pass
 
 try:
@@ -45,13 +48,13 @@ def create_cache():
 
     for user in users:
         try:
-            Path("./images/" + user).mkdir(exist_ok=False)
+            Path(f"{args.path}/{user}").mkdir(exist_ok=False)
         except FileExistsError: pass
         print(user)
 
         tconfig = twint.Config()
 
-        tconfig.Hide_output = not VERBOSE
+        tconfig.Hide_output = not args.verbose
         tconfig.Username = user
         # If only static
         # tconfig.Images = True
@@ -99,7 +102,7 @@ def download_cache(delete=True):
             continue
 
         options = {
-            'outtmpl': f"images/{user}/" + '%(id)s.%(ext)s'
+            'outtmpl': f"{args.path}/{user}/" + '%(id)s.%(ext)s'
         }
 
         correct = True
@@ -133,20 +136,20 @@ def download_cache(delete=True):
                     if photos_len > 1:
                         print(f"{idx + 1}/{photos_len} ", end="")
                     name = os.path.basename(photo)
-                    if os.path.exists(f"images/{user}/{name}"):
-                        if VERBOSE: print(f"Skipping {photo}")
+                    if os.path.exists(f"{args.path}/{user}/{name}"):
+                        if args.verbose: print(f"Skipping {photo}")
                         continue
 
-                    if VERBOSE: print(f"Downloading {photo}...")
+                    if args.verbose: print(f"Downloading {photo}...")
                     r = requests.get(photo)
 
-                    open(f"images/{user}/{name}", "wb").write(r.content)
+                    open(f"{args.path}/{user}/{name}", "wb").write(r.content)
 
                 url, thumb = row[20], row[24]
                 if "video_thumb" in thumb:
                     name = url.split("/")[-1]
-                    if os.path.exists(f"images/{user}/{name}.mp4"):
-                        if VERBOSE: print(f"{current}/{total} Skipping video from {url}")
+                    if os.path.exists(f"{args.path}/{user}/{name}.mp4"):
+                        if args.verbose: print(f"{current}/{total} Skipping video from {url}")
                         continue
 
                     print(f"{current}/{total} Downloading {url}...")
@@ -163,4 +166,4 @@ def download_cache(delete=True):
             os.remove(f"cache_{user}.csv")
 
 create_cache()
-download_cache(False)
+download_cache()

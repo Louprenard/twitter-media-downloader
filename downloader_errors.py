@@ -1,11 +1,12 @@
 import youtube_dl
 import os
-import sys
+import argparse
 
-VERBOSE = False
+parser = argparse.ArgumentParser(description="A simple tool to download videos and picture directly from Twitter, without an account.")
+parser.add_argument("--path", dest="path", type=str, help="Specify the output path to download files", default="images")
+parser.add_argument("--verbose", dest="verbose", type=bool, help="Specify if the program must outputs logs while downloading", nargs="?", default=False, const=True)
 
-if "-v" in sys.argv:
-    VERBOSE = True
+args = parser.parse_args()
 
 with open("errors", encoding="utf-8") as f:
     errors = f.read().splitlines()
@@ -17,12 +18,12 @@ for idx, error in enumerate(errors):
     user, url = error.split(' ')
 
     options = {
-        'outtmpl': f"images/{user}/" + '%(id)s.%(ext)s'
+        'outtmpl': f"{args.path}/{user}/" + '%(id)s.%(ext)s'
     }
 
     name = url.split("/")[-1]
-    if os.path.exists(f"images/{user}/{name}.mp4"):
-        if VERBOSE: print(f"{idx + 1}/{total} Skipping video from {url}")
+    if os.path.exists(f"{args.path}/{user}/{name}.mp4"):
+        if args.verbose: print(f"{idx + 1}/{total} Skipping video from {url}")
         continue
 
     try:
