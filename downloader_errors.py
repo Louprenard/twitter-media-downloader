@@ -3,8 +3,8 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description="A simple tool to download videos and picture directly from Twitter, without an account.")
-parser.add_argument("--path", dest="path", type=str, help="Specify the output path to download files", default="images")
-parser.add_argument("--verbose", dest="verbose", type=bool, help="Specify if the program must outputs logs while downloading", nargs="?", default=False, const=True)
+parser.add_argument("--path", "-p", dest="path", type=str, help="Specify the output path to download files", default="images")
+parser.add_argument("--verbose", "-v", dest="verbose", type=bool, help="Specify if the program must outputs logs while downloading", nargs="?", default=False, const=True)
 
 args = parser.parse_args()
 
